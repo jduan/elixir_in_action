@@ -9,6 +9,6 @@ defmodule TodoListTest do
 
     assert TodoList.entries(todo_list, {2013, 12, 19}) == ["Movies", "Dentist"]
     assert TodoList.entries(todo_list, {2013, 12, 20}) == ["Shopping"]
-    assert TodoList.entries(todo_list, {2013, 12, 21}) == nil
+    assert TodoList.entries(todo_list, {2013, 12, 21}) == []
   end
 end

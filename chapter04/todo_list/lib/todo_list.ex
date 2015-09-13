@@ -4,13 +4,11 @@ defmodule TodoList do
   end
 
   def add_entry(todo, key, what) do
-    case Map.get(todo, key) do
-      nil -> Map.put(todo, key, [what])
-      lst -> Map.put(todo, key, [what | lst])
-    end
+    Map.update(todo, key, [what],
+      fn lst -> [what | lst] end)
   end
 
   def entries(todo, key) do
-    Map.get(todo, key)
+    Map.get(todo, key, [])
   end
 end
