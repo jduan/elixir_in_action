@@ -3,8 +3,8 @@ defmodule TodoList do
     MultiDict.new
   end
 
-  def add_entry(todo, key, what) do
-    MultiDict.put(todo, key, what)
+  def add_entry(todo, entry) do
+    MultiDict.put(todo, entry.date, entry)
   end
 
   def entries(todo, key) do
