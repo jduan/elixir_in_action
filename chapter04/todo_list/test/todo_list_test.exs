@@ -1,7 +1,7 @@
 defmodule TodoListTest do
   use ExUnit.Case
 
-  test "test todo list" do
+  test "test TodoList" do
     todo_list = TodoList.new
     |> TodoList.add_entry(%{date: {2013, 12, 19}, title: "Dentist"})
     |> TodoList.add_entry(%{date: {2013, 12, 20}, title: "Shopping"})
