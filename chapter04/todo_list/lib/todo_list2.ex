@@ -32,4 +32,8 @@ defmodule TodoList2 do
         %TodoList2{todo_list | entries: new_entries}
     end
   end
+
+  def update_entry(todo_list, new_entry) do
+    update_entry(todo_list, new_entry.id, fn _ -> new_entry end)
+  end
 end
