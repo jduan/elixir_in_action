@@ -36,4 +36,12 @@ defmodule TodoList2 do
   def update_entry(todo_list, new_entry) do
     update_entry(todo_list, new_entry.id, fn _ -> new_entry end)
   end
+
+  def delete_entry(%TodoList2{entries: entries, auto_id: auto_id}, entry_id) do
+    new_entries = Dict.delete(entries, entry_id)
+    %TodoList2{
+      auto_id: auto_id,
+      entries: new_entries
+    }
+  end
 end

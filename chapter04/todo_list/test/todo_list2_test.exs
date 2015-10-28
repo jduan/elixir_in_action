@@ -51,4 +51,15 @@ defmodule TodoList2Test do
       %{date: {2013, 12, 20}, title: "Shopping"},
     ]
   end
+
+  test "delete", context do
+    todo_list = context[:todo_list]
+    new_todo_list = TodoList2.delete_entry(todo_list, 1)
+    assert TodoList2.entries(new_todo_list, {2013, 12, 19}) == [
+      %{date: {2013, 12, 19}, title: "Movies"},
+    ]
+    assert TodoList2.entries(new_todo_list, {2013, 12, 20}) == [
+      %{date: {2013, 12, 20}, title: "Shopping"},
+    ]
+  end
 end
