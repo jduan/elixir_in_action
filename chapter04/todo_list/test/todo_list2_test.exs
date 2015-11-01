@@ -62,4 +62,21 @@ defmodule TodoList2Test do
       %{date: {2013, 12, 20}, title: "Shopping"},
     ]
   end
+
+  test "iterative updates" do
+    entries = [
+      %{date: {2013, 12, 19}, title: "Dentist"},
+      %{date: {2013, 12, 20}, title: "Shopping"},
+      %{date: {2013, 12, 19}, title: "Movies"},
+    ]
+    todo_list = TodoList2.new(entries)
+
+    assert TodoList2.entries(todo_list, {2013, 12, 19}) == [
+      %{date: {2013, 12, 19}, title: "Movies"},
+      %{date: {2013, 12, 19}, title: "Dentist"},
+    ]
+    assert TodoList2.entries(todo_list, {2013, 12, 20}) == [
+      %{date: {2013, 12, 20}, title: "Shopping"},
+    ]
+  end
 end
