@@ -1,53 +1,46 @@
 defmodule TodoServer do
   @alias __MODULE__
 
+  # public API
   def start do
-    pid = spawn(fn -> loop(TodoList2.new) end)
+    pid = ServerProcess.start(TodoServer)
     Process.register(pid, @alias)
   end
 
   def add_entry(new_entry) do
-    send(@alias, {:add_entry, new_entry})
+    ServerProcess.cast(@alias, {:add_entry, new_entry})
   end
 
   def update_entry(new_entry) do
-    send(@alias, {:update_entry, new_entry})
+    ServerProcess.cast(@alias, {:update_entry, new_entry})
   end
 
   def delete_entry(entry_id) do
-    send(@alias, {:delete_entry, entry_id})
+    ServerProcess.cast(@alias, {:delete_entry, entry_id})
   end
 
   def entries(date) do
-    send(@alias, {:entries, self, date})
-    receive do
-      {:entries, entries} -> entries
-    end
+    ServerProcess.call(@alias, {:entries, date})
   end
 
-  defp loop(todo_list) do
-    new_todo_list = receive do
-      message ->
-        process_message(todo_list, message)
-    end
-
-    loop(new_todo_list)
+  # implementation detail
+  def init do
+    TodoList2.new
   end
 
-  defp process_message(todo_list, {:add_entry, new_entry}) do
+  def handle_cast({:add_entry, new_entry}, todo_list) do
     TodoList2.add_entry(todo_list, new_entry)
   end
 
-  defp process_message(todo_list, {:update_entry, new_entry}) do
+  def handle_cast({:update_entry, new_entry}, todo_list) do
     TodoList2.update_entry(todo_list, new_entry)
   end
 
-  defp process_message(todo_list, {:delete_entry, entry_id}) do
+  def handle_cast({:delete_entry, entry_id}, todo_list) do
     TodoList2.delete_entry(todo_list, entry_id)
   end
 
-  defp process_message(todo_list, {:entries, caller, date}) do
-    send(caller, {:entries, TodoList2.entries(todo_list, date) })
-    todo_list
+  def handle_call({:entries, date}, todo_list) do
+    {TodoList2.entries(todo_list, date), todo_list}
   end
 end
