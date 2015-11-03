@@ -3,9 +3,10 @@ defmodule KeyvalueStoreTest do
   doctest KeyvalueStore
 
   test "put" do
-    store = ServerProcess.start(KeyvalueStore)
-    ServerProcess.call(store, {:put, "name", "jingjing"})
+    store = KeyvalueStore.new
 
-    assert ServerProcess.call(store, {:get, "name"}) == "jingjing"
+    KeyvalueStore.put(store, "name", "jingjing")
+
+    assert KeyvalueStore.get(store, "name") == "jingjing"
   end
 end
