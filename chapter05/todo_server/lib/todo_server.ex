@@ -25,22 +25,22 @@ defmodule TodoServer do
 
   # implementation detail
   def init do
-    TodoList2.new
+    TodoList.new
   end
 
   def handle_cast({:add_entry, new_entry}, todo_list) do
-    TodoList2.add_entry(todo_list, new_entry)
+    TodoList.add_entry(todo_list, new_entry)
   end
 
   def handle_cast({:update_entry, new_entry}, todo_list) do
-    TodoList2.update_entry(todo_list, new_entry)
+    TodoList.update_entry(todo_list, new_entry)
   end
 
   def handle_cast({:delete_entry, entry_id}, todo_list) do
-    TodoList2.delete_entry(todo_list, entry_id)
+    TodoList.delete_entry(todo_list, entry_id)
   end
 
   def handle_call({:entries, date}, todo_list) do
-    {TodoList2.entries(todo_list, date), todo_list}
+    {TodoList.entries(todo_list, date), todo_list}
   end
 end
