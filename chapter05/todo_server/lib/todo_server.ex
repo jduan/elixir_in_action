@@ -1,26 +1,26 @@
 defmodule TodoServer do
   use GenServer
-  @alias __MODULE__
 
   # public API
   def start do
-    GenServer.start(__MODULE__, nil, name: @alias)
+    {:ok, pid} = GenServer.start(__MODULE__, nil)
+    pid
   end
 
-  def add_entry(new_entry) do
-    GenServer.cast(@alias, {:add_entry, new_entry})
+  def add_entry(pid, new_entry) do
+    GenServer.cast(pid, {:add_entry, new_entry})
   end
 
-  def update_entry(new_entry) do
-    GenServer.cast(@alias, {:update_entry, new_entry})
+  def update_entry(pid, new_entry) do
+    GenServer.cast(pid, {:update_entry, new_entry})
   end
 
-  def delete_entry(entry_id) do
-    GenServer.cast(@alias, {:delete_entry, entry_id})
+  def delete_entry(pid, entry_id) do
+    GenServer.cast(pid, {:delete_entry, entry_id})
   end
 
-  def entries(date) do
-    GenServer.call(@alias, {:entries, date})
+  def entries(pid, date) do
+    GenServer.call(pid, {:entries, date})
   end
 
   # implementation detail

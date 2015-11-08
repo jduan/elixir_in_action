@@ -3,11 +3,11 @@ defmodule TodoServerTest do
   doctest TodoServer
 
   test "add_entry" do
-    TodoServer.start
-    TodoServer.add_entry(%{date: {2013, 12, 10}, title: "Movies"})
-    TodoServer.add_entry(%{date: {2013, 12, 10}, title: "Shopping"})
+    pid = TodoServer.start
+    TodoServer.add_entry(pid, %{date: {2013, 12, 10}, title: "Movies"})
+    TodoServer.add_entry(pid, %{date: {2013, 12, 10}, title: "Shopping"})
 
-    assert TodoServer.entries({2013, 12, 10}) == [
+    assert TodoServer.entries(pid, {2013, 12, 10}) == [
       %{date: {2013, 12, 10}, title: "Shopping"},
       %{date: {2013, 12, 10}, title: "Movies"},
     ]
