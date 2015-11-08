@@ -16,6 +16,7 @@ defmodule TodoCache do
   end
 
   def init(_) do
+    TodoDatabase.start("/tmp/todolists")
     {:ok, %{}}
   end
 

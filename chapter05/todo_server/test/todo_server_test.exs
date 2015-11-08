@@ -3,7 +3,10 @@ defmodule TodoServerTest do
   doctest TodoServer
 
   test "add_entry" do
-    pid = TodoServer.start
+    path = "/tmp/todolists"
+    File.rm_rf!(path)
+    TodoDatabase.start(path)
+    pid = TodoServer.start("server1")
     TodoServer.add_entry(pid, %{date: {2013, 12, 10}, title: "Movies"})
     TodoServer.add_entry(pid, %{date: {2013, 12, 10}, title: "Shopping"})
 
