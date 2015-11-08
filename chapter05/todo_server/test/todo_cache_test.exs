@@ -2,8 +2,14 @@ defmodule TodoCacheTest do
   use ExUnit.Case
   doctest TodoCache
 
-  test "same name should map to the same process" do
+  setup do
     TodoCache.start
+    on_exit fn ->
+      TodoCache.clear
+    end
+  end
+
+  test "same name should map to the same process" do
     pid1 = TodoCache.server_process("todo1")
     pid2 = TodoCache.server_process("todo1")
 
@@ -19,14 +25,13 @@ defmodule TodoCacheTest do
   end
 
   test "test a single process" do
-    TodoCache.start
-    pid2 = TodoCache.server_process("todo2")
+    pid1 = TodoCache.server_process("todo1")
 
-    assert TodoServer.entries(pid2, %{date: {2013, 12, 10}}) == []
+    assert TodoServer.entries(pid1, %{date: {2013, 12, 10}}) == []
 
-    TodoServer.add_entry(pid2, %{date: {2013, 12, 10}, title: "Movies"})
-    TodoServer.add_entry(pid2, %{date: {2013, 12, 10}, title: "Shopping"})
-    assert TodoServer.entries(pid2, {2013, 12, 10}) == [
+    TodoServer.add_entry(pid1, %{date: {2013, 12, 10}, title: "Movies"})
+    TodoServer.add_entry(pid1, %{date: {2013, 12, 10}, title: "Shopping"})
+    assert TodoServer.entries(pid1, {2013, 12, 10}) == [
       %{date: {2013, 12, 10}, title: "Shopping"},
       %{date: {2013, 12, 10}, title: "Movies"},
     ]
