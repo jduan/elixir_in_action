@@ -3,9 +3,15 @@ defmodule TodoCacheTest do
   doctest TodoCache
 
   setup do
-    TodoCache.start
+    path = "/tmp/todolists"
+    File.rm_rf!(path)
+
+    TodoCache.start(path)
     on_exit fn ->
       TodoCache.clear
+      TodoCache.stop
+      TodoDatabase.clear
+      TodoDatabase.stop
     end
   end
 

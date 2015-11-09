@@ -2,8 +2,8 @@ defmodule TodoCache do
   use GenServer
   @alias __MODULE__
 
-  def start do
-    GenServer.start(__MODULE__, nil, name: @alias)
+  def start(db_folder) do
+    GenServer.start(__MODULE__, db_folder, name: @alias)
   end
 
   def server_process(name) do
@@ -15,27 +15,31 @@ defmodule TodoCache do
     GenServer.call(@alias, {:clear})
   end
 
-  def init(_) do
-    TodoDatabase.start("/tmp/todolists")
-    {:ok, %{}}
+  def stop do
+    Process.exit(Process.whereis(@alias), :kill)
   end
 
-  def handle_call({:server_process, name}, _, cache) do
+  def init(db_folder) do
+    TodoDatabase.start(db_folder)
+    {:ok, {db_folder, %{}}}
+  end
+
+  def handle_call({:server_process, name}, _, {db_folder, cache}) do
     case Map.fetch(cache, name) do
       {:ok, pid} ->
-        {:reply, pid, cache}
+        {:reply, pid, {db_folder, cache}}
       :error ->
-        pid = TodoServer.start
-        {:reply, pid, Map.put(cache, name, pid)}
+        pid = TodoServer.start(name)
+        {:reply, pid, {db_folder, Map.put(cache, name, pid)}}
     end
   end
 
-  def handle_call({:clear}, _, cache) do
+  def handle_call({:clear}, _, {db_folder, cache}) do
     cache
     |> Enum.each(fn {_name, pid} ->
       Process.exit(pid, :kill)
     end)
 
-    {:reply, :ok, %{}}
+    {:reply, :ok, {db_folder, %{}}}
   end
 end
