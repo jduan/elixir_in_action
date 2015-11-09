@@ -4,7 +4,6 @@ defmodule TodoDatabaseTest do
 
   setup do
     path = "/tmp/todolists"
-    File.rm_rf!(path)
     TodoDatabase.start_link(path)
     :ok
   end
@@ -13,5 +12,7 @@ defmodule TodoDatabaseTest do
     TodoDatabase.store("key1", "data1")
 
     assert TodoDatabase.get("key1") == "data1"
+
+    TodoDatabase.clear
   end
 end

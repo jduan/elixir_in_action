@@ -4,7 +4,6 @@ defmodule TodoCacheTest do
 
   setup do
     path = "/tmp/todolists"
-    File.rm_rf!(path)
     TodoCache.start_link(path)
     :ok
   end
@@ -22,6 +21,8 @@ defmodule TodoCacheTest do
       %{date: {2013, 12, 10}, title: "Shopping"},
       %{date: {2013, 12, 10}, title: "Movies"},
     ]
+
+    TodoDatabase.clear
   end
 
   test "test a single process" do
@@ -35,5 +36,7 @@ defmodule TodoCacheTest do
       %{date: {2013, 12, 10}, title: "Shopping"},
       %{date: {2013, 12, 10}, title: "Movies"},
     ]
+
+    TodoDatabase.clear
   end
 end

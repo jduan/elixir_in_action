@@ -17,6 +17,11 @@ defmodule TodoDatabase do
     GenServer.call(__MODULE__, {:get, key})
   end
 
+  # clear all the files in the database
+  def clear do
+    GenServer.call(__MODULE__, {:clear})
+  end
+
   # Server implementation
 
   def init(db_folder) do
@@ -35,6 +40,11 @@ defmodule TodoDatabase do
   def handle_call({:store, key, data}, _, db_folder) do
     file_path(db_folder, key)
     |> File.write!(:erlang.term_to_binary(data))
+    {:reply, :ok, db_folder}
+  end
+
+  def handle_call({:clear}, _, db_folder) do
+    File.rm_rf!(db_folder)
     {:reply, :ok, db_folder}
   end
 

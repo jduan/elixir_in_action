@@ -4,7 +4,6 @@ defmodule TodoServerTest do
 
   setup do
     path = "/tmp/todolists"
-    File.rm_rf!(path)
     TodoDatabase.start_link(path)
     :ok
   end
@@ -18,5 +17,7 @@ defmodule TodoServerTest do
       %{date: {2013, 12, 10}, title: "Shopping"},
       %{date: {2013, 12, 10}, title: "Movies"},
     ]
+
+    TodoDatabase.clear
   end
 end
