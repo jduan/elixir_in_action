@@ -1,9 +1,12 @@
+# This models a process to manage a single TodoList. It uses the TodoList data
+# type.
 defmodule TodoServer do
   use GenServer
 
-  # public API
-  def start(name) do
-    {:ok, pid} = GenServer.start(__MODULE__, name)
+  # Public API
+
+  def start_link(name) do
+    {:ok, pid} = GenServer.start_link(__MODULE__, name)
     pid
   end
 
@@ -23,7 +26,8 @@ defmodule TodoServer do
     GenServer.call(pid, {:entries, date})
   end
 
-  # implementation detail
+  # Server implementation
+
   def init(name) do
     todo_list = case TodoDatabase.get(name) do
       nil -> TodoList.new

@@ -5,17 +5,12 @@ defmodule TodoServerTest do
   setup do
     path = "/tmp/todolists"
     File.rm_rf!(path)
-    TodoDatabase.start(path)
-    IO.puts("TodoDatabase started!!!")
-
-    on_exit fn ->
-      TodoDatabase.clear
-      TodoDatabase.stop
-    end
+    TodoDatabase.start_link(path)
+    :ok
   end
 
   test "add_entry" do
-    pid = TodoServer.start("server1")
+    pid = TodoServer.start_link("server1")
     TodoServer.add_entry(pid, %{date: {2013, 12, 10}, title: "Movies"})
     TodoServer.add_entry(pid, %{date: {2013, 12, 10}, title: "Shopping"})
 

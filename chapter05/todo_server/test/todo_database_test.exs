@@ -5,12 +5,8 @@ defmodule TodoDatabaseTest do
   setup do
     path = "/tmp/todolists"
     File.rm_rf!(path)
-    TodoDatabase.start(path)
-
-    on_exit fn ->
-      TodoDatabase.clear
-      TodoDatabase.stop
-    end
+    TodoDatabase.start_link(path)
+    :ok
   end
 
   test "get and store should work" do

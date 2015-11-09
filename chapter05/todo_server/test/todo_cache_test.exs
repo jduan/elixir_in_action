@@ -5,14 +5,8 @@ defmodule TodoCacheTest do
   setup do
     path = "/tmp/todolists"
     File.rm_rf!(path)
-
-    TodoCache.start(path)
-    on_exit fn ->
-      TodoCache.clear
-      TodoCache.stop
-      TodoDatabase.clear
-      TodoDatabase.stop
-    end
+    TodoCache.start_link(path)
+    :ok
   end
 
   test "same name should map to the same process" do
