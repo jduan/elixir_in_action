@@ -5,8 +5,8 @@ defmodule TodoCache do
 
   # Public API
 
-  def start_link(db_folder) do
-    GenServer.start_link(__MODULE__, db_folder, name: @alias)
+  def start_link do
+    GenServer.start_link(__MODULE__, nil, name: @alias)
   end
 
   def server_process(name) do
@@ -15,17 +15,17 @@ defmodule TodoCache do
 
   # Server implementation
 
-  def init(db_folder) do
-    {:ok, {db_folder, %{}}}
+  def init(_) do
+    {:ok, %{}}
   end
 
-  def handle_call({:server_process, name}, _, {db_folder, cache}) do
+  def handle_call({:server_process, name}, _, cache) do
     case Map.fetch(cache, name) do
       {:ok, pid} ->
-        {:reply, pid, {db_folder, cache}}
+        {:reply, pid, cache}
       :error ->
         pid = TodoServer.start_link(name)
-        {:reply, pid, {db_folder, Map.put(cache, name, pid)}}
+        {:reply, pid, Map.put(cache, name, pid)}
     end
   end
 end
