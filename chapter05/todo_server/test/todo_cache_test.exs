@@ -5,6 +5,7 @@ defmodule TodoCacheTest do
   setup do
     path = "/tmp/todolists"
     TodoCache.start_link(path)
+    TodoDatabase.start_link(path)
     :ok
   end
 

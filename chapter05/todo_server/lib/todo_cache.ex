@@ -16,8 +16,6 @@ defmodule TodoCache do
   # Server implementation
 
   def init(db_folder) do
-    # This is a hack. There must be a better way to start TodoDatabase
-    TodoDatabase.start_link(db_folder)
     {:ok, {db_folder, %{}}}
   end
 
