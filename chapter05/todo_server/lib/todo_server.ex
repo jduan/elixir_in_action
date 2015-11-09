@@ -29,7 +29,10 @@ defmodule TodoServer do
   # Server implementation
 
   def init(name) do
-    {:ok, {name, TodoDatabase.get(name) || TodoList.new}}
+    # init can be heavy, use this technique to make "process creation" faster
+    # by delaying real init
+    send(self, :real_init)
+    {:ok, {name, nil}}
   end
 
   def handle_cast({:add_entry, new_entry}, {name, todo_list}) do
@@ -52,6 +55,10 @@ defmodule TodoServer do
 
   def handle_call({:entries, date}, _, {name, todo_list}) do
     {:reply, TodoList.entries(todo_list, date), {name, todo_list}}
+  end
+
+  def handle_info(:real_init, {name, nil}) do
+    {:noreply, {name, TodoDatabase.get(name) || TodoList.new}}
   end
 
   def handle_info(_, state) do
