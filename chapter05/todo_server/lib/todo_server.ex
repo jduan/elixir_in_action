@@ -29,11 +29,7 @@ defmodule TodoServer do
   # Server implementation
 
   def init(name) do
-    todo_list = case TodoDatabase.get(name) do
-      nil -> TodoList.new
-      lst -> lst
-    end
-    {:ok, {name, todo_list}}
+    {:ok, {name, TodoDatabase.get(name) || TodoList.new}}
   end
 
   def handle_cast({:add_entry, new_entry}, {name, todo_list}) do
