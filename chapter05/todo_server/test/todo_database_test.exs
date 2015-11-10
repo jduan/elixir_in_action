@@ -11,6 +11,8 @@ defmodule TodoDatabaseTest do
   test "get and store should work" do
     TodoDatabase.store("key1", "data1")
 
+    # TODO: figure out how to remove this hack
+    :timer.sleep(100)
     assert TodoDatabase.get("key1") == "data1"
 
     TodoDatabase.clear
