@@ -3,6 +3,8 @@
 defmodule TodoDatabase do
   use GenServer
 
+  @num_of_workers 3
+
   # Public API
 
   def start_link(db_folder) do
@@ -25,36 +27,41 @@ defmodule TodoDatabase do
   # Server implementation
 
   def init(db_folder) do
+    num_to_worker = spawn_workers(db_folder)
     :ok = File.mkdir_p(db_folder)
-    {:ok, db_folder}
+    {:ok, {db_folder, num_to_worker}}
   end
 
-  def handle_call({:get, key}, from, db_folder) do
-    Task.start_link(fn ->
-      data = case File.read(file_path(db_folder, key)) do
-        {:ok, binary} -> :erlang.binary_to_term(binary)
-        _ -> nil
-      end
-      GenServer.reply(from, data)
-    end)
-    {:noreply, db_folder}
+  def handle_call({:get, key}, _, state = {db_folder, num_to_worker}) do
+    worker_pid = find_worker(key, num_to_worker)
+    data = TodoDatabaseWorker.get(worker_pid, key)
+    {:reply, data, state}
   end
 
-  def handle_call({:store, key, data}, _, db_folder) do
-    # TODO: spawn off a task to do persistence
-    Task.start_link(fn ->
-      file_path(db_folder, key)
-      |> File.write!(:erlang.term_to_binary(data))
-    end)
-    {:reply, :ok, db_folder}
+  def handle_call({:store, key, data}, _, state = {db_folder, num_to_worker}) do
+    worker_pid = find_worker(key, num_to_worker)
+    TodoDatabaseWorker.store(worker_pid, key, data)
+
+    {:reply, :ok, state}
   end
 
-  def handle_call({:clear}, _, db_folder) do
+  def handle_call({:clear}, _, state = {db_folder, _num_to_worker}) do
     File.rm_rf!(db_folder)
-    {:reply, :ok, db_folder}
+    {:reply, :ok, state}
   end
 
-  defp file_path(db_folder, key) do
-    "#{db_folder}/#{key}"
+  defp spawn_workers(db_folder) do
+    1..@num_of_workers
+    |> Enum.reduce(%{}, fn i, map ->
+      pid = TodoDatabaseWorker.start_link(db_folder)
+      Map.put(map, i-1, pid)
+    end)
+  end
+
+  defp find_worker(key, num_to_worker) do
+    worker_number = rem(:erlang.phash2(key), @num_of_workers)
+    IO.puts("worker_number: #{worker_number}")
+    IO.puts("num_to_worker: #{inspect num_to_worker}")
+    num_to_worker[worker_number]
   end
 end
