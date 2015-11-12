@@ -16,6 +16,10 @@ defmodule TodoDatabaseWorker do
     GenServer.call(pid, {:get, key})
   end
 
+  def clear(pid, key) do
+    GenServer.call(pid, {:clear, key})
+  end
+
   # Server implementation
 
   def init(db_folder) do
@@ -29,6 +33,11 @@ defmodule TodoDatabaseWorker do
       _ -> nil
     end
     {:reply, data, db_folder}
+  end
+
+  def handle_call({:clear, key}, _, db_folder) do
+    File.rm!(file_path(db_folder, key))
+    {:reply, :ok, db_folder}
   end
 
   def handle_call({:store, key, data}, _, db_folder) do

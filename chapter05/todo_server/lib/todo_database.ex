@@ -32,13 +32,13 @@ defmodule TodoDatabase do
     {:ok, {db_folder, num_to_worker}}
   end
 
-  def handle_call({:get, key}, _, state = {db_folder, num_to_worker}) do
+  def handle_call({:get, key}, _, state = {_db_folder, num_to_worker}) do
     worker_pid = find_worker(key, num_to_worker)
     data = TodoDatabaseWorker.get(worker_pid, key)
     {:reply, data, state}
   end
 
-  def handle_call({:store, key, data}, _, state = {db_folder, num_to_worker}) do
+  def handle_call({:store, key, data}, _, state = {_db_folder, num_to_worker}) do
     worker_pid = find_worker(key, num_to_worker)
     TodoDatabaseWorker.store(worker_pid, key, data)
 
@@ -60,8 +60,6 @@ defmodule TodoDatabase do
 
   defp find_worker(key, num_to_worker) do
     worker_number = rem(:erlang.phash2(key), @num_of_workers)
-    IO.puts("worker_number: #{worker_number}")
-    IO.puts("num_to_worker: #{inspect num_to_worker}")
     num_to_worker[worker_number]
   end
 end
