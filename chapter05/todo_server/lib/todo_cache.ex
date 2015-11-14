@@ -16,7 +16,6 @@ defmodule TodoCache do
   # Server implementation
 
   def init(_) do
-    TodoDatabase.start_link("./persist/")
     {:ok, %{}}
   end
 

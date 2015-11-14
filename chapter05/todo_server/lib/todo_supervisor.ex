@@ -10,7 +10,10 @@ defmodule TodoSupervisor do
 
   # Returns the "supervision specs"
   def init(_) do
-    processes = [worker(TodoCache, [])]
+    processes = [
+      worker(TodoCache, []),
+      worker(TodoDatabase, ["./persist"]),
+    ]
     supervise(processes, strategy: :one_for_one)
   end
 end
