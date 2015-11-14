@@ -8,6 +8,7 @@ defmodule TodoDatabase do
   # Public API
 
   def start_link(db_folder) do
+    IO.puts "Starting TodoDatabase"
     GenServer.start_link(__MODULE__, db_folder, name: __MODULE__)
   end
 

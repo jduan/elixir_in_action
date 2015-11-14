@@ -6,6 +6,7 @@ defmodule TodoCache do
   # Public API
 
   def start_link do
+    IO.puts "Starting TodoCache"
     GenServer.start_link(__MODULE__, nil, name: @alias)
   end
 
@@ -28,4 +29,5 @@ defmodule TodoCache do
         {:reply, pid, Map.put(cache, name, pid)}
     end
   end
+
 end

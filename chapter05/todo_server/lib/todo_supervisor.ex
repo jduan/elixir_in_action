@@ -3,6 +3,7 @@ defmodule TodoSupervisor do
 
   # Public API
   def start_link do
+    IO.puts "Starting TodoSupervisor"
     Supervisor.start_link(__MODULE__, nil)
   end
 

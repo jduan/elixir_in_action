@@ -6,6 +6,7 @@ defmodule TodoServer do
   # Public API
 
   def start_link(name) do
+    IO.puts "Starting TodoServer"
     {:ok, pid} = GenServer.start_link(__MODULE__, name)
     pid
   end

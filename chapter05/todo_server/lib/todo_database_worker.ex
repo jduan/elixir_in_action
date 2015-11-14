@@ -4,6 +4,7 @@ defmodule TodoDatabaseWorker do
   # Public API
 
   def start_link(db_folder) do
+    IO.puts "Starting TodoDatabaseWorker"
     {:ok, pid} = GenServer.start_link(__MODULE__, db_folder)
     pid
   end
