@@ -12,6 +12,7 @@ defmodule TodoSupervisor do
   # Returns the "supervision specs"
   def init(_) do
     processes = [
+      # worker: by default the function start_link is called on the module
       worker(TodoCache, []),
       worker(TodoDatabase, ["./persist"]),
     ]
