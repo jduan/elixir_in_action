@@ -3,22 +3,21 @@ defmodule TodoDatabaseWorker do
 
   # Public API
 
-  def start_link(db_folder) do
-    IO.puts "Starting TodoDatabaseWorker"
-    {:ok, pid} = GenServer.start_link(__MODULE__, db_folder)
-    pid
+  def start_link(db_folder, worker_id) do
+    IO.puts "Starting TodoDatabaseWorker #{worker_id}"
+    GenServer.start_link(__MODULE__, db_folder, name: via_tuple(worker_id))
   end
 
-  def store(pid, key, data) do
-    GenServer.call(pid, {:store, key, data})
+  def store(worker_id, key, data) do
+    GenServer.call(via_tuple(worker_id), {:store, key, data})
   end
 
-  def get(pid, key) do
-    GenServer.call(pid, {:get, key})
+  def get(worker_id, key) do
+    GenServer.call(via_tuple(worker_id), {:get, key})
   end
 
-  def clear(pid, key) do
-    GenServer.call(pid, {:clear, key})
+  def clear(worker_id, key) do
+    GenServer.call(via_tuple(worker_id), {:clear, key})
   end
 
   # Server implementation
@@ -49,5 +48,9 @@ defmodule TodoDatabaseWorker do
 
   defp file_path(db_folder, key) do
     "#{db_folder}/#{key}"
+  end
+
+  defp via_tuple(worker_id) do
+    {:via, Todo.ProcessRegistry, {:database_worker, worker_id}}
   end
 end

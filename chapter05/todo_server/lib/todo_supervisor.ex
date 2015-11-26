@@ -13,8 +13,9 @@ defmodule TodoSupervisor do
   def init(_) do
     processes = [
       # worker: by default the function start_link is called on the module
+      worker(Todo.ProcessRegistry, []),
+      supervisor(TodoDatabase, ["./persist"]),
       worker(TodoCache, []),
-      worker(TodoDatabase, ["./persist"]),
     ]
     supervise(processes, strategy: :one_for_one)
   end
