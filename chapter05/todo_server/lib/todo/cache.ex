@@ -1,12 +1,12 @@
 # TodoCache is used to start TodoServer based on name.
-defmodule TodoCache do
+defmodule Todo.Cache do
   use GenServer
   @alias __MODULE__
 
   # Public API
 
   def start_link do
-    IO.puts "Starting TodoCache"
+    IO.puts "Starting Todo.Cache"
     GenServer.start_link(__MODULE__, nil, name: @alias)
   end
 
@@ -21,11 +21,11 @@ defmodule TodoCache do
   end
 
   def handle_call({:server_process, name}, _, state) do
-    pid = case TodoServer.whereis(name) do
+    pid = case Todo.Server.whereis(name) do
       :undefined ->
         IO.puts "#{name} hasn't started yet"
         Todo.ServerSupervisor.start_child(name)
-        TodoServer.whereis(name)
+        Todo.Server.whereis(name)
       pid -> pid
     end
     {:reply, pid, state}

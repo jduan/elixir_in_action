@@ -1,10 +1,10 @@
-defmodule TodoDatabaseWorker do
+defmodule Todo.DatabaseWorker do
   use GenServer
 
   # Public API
 
   def start_link(db_folder, worker_id) do
-    IO.puts "Starting TodoDatabaseWorker #{worker_id}"
+    IO.puts "Starting Todo.DatabaseWorker #{worker_id}"
     GenServer.start_link(__MODULE__, db_folder, name: via_tuple(worker_id))
   end
 

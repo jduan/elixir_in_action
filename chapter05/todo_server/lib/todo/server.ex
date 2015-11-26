@@ -1,12 +1,12 @@
 # This models a process to manage a single TodoList. It uses the TodoList data
 # type.
-defmodule TodoServer do
+defmodule Todo.Server do
   use GenServer
 
   # Public API
 
   def start_link(name) do
-    IO.puts "Starting TodoServer for #{name}"
+    IO.puts "Starting Todo.Server for #{name}"
     GenServer.start_link(__MODULE__, name, name: via_tuple(name))
   end
 
@@ -40,29 +40,29 @@ defmodule TodoServer do
   end
 
   def handle_cast({:add_entry, new_entry}, {name, todo_list}) do
-    todo_list = TodoList.add_entry(todo_list, new_entry)
-    TodoDatabase.store(name, todo_list)
+    todo_list = Todo.List.add_entry(todo_list, new_entry)
+    Todo.Database.store(name, todo_list)
     {:noreply, {name, todo_list}}
   end
 
   def handle_cast({:update_entry, new_entry}, {name, todo_list}) do
-    todo_list = TodoList.update_entry(todo_list, new_entry)
-    TodoDatabase.store(name, todo_list)
+    todo_list = Todo.List.update_entry(todo_list, new_entry)
+    Todo.Database.store(name, todo_list)
     {:noreply, {name, todo_list}}
   end
 
   def handle_cast({:delete_entry, entry_id}, {name, todo_list}) do
-    todo_list = TodoList.delete_entry(todo_list, entry_id)
-    TodoDatabase.store(name, todo_list)
+    todo_list = Todo.List.delete_entry(todo_list, entry_id)
+    Todo.Database.store(name, todo_list)
     {:noreply, {name, todo_list}}
   end
 
   def handle_call({:entries, date}, _, {name, todo_list}) do
-    {:reply, TodoList.entries(todo_list, date), {name, todo_list}}
+    {:reply, Todo.List.entries(todo_list, date), {name, todo_list}}
   end
 
   def handle_info(:real_init, {name, nil}) do
-    {:noreply, {name, TodoDatabase.get(name) || TodoList.new}}
+    {:noreply, {name, Todo.Database.get(name) || Todo.List.new}}
   end
 
   def handle_info(_, state) do

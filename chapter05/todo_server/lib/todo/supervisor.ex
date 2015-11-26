@@ -1,9 +1,9 @@
-defmodule TodoSupervisor do
+defmodule Todo.Supervisor do
   use Supervisor
 
   # Public API
   def start_link do
-    IO.puts "Starting TodoSupervisor"
+    IO.puts "Starting Todo.Supervisor"
     Supervisor.start_link(__MODULE__, nil)
   end
 
@@ -14,9 +14,9 @@ defmodule TodoSupervisor do
     processes = [
       # worker: by default the function start_link is called on the module
       worker(Todo.ProcessRegistry, []),
-      supervisor(TodoDatabase, ["./persist"]),
+      supervisor(Todo.Database, ["./persist"]),
       supervisor(Todo.ServerSupervisor, []),
-      worker(TodoCache, []),
+      worker(Todo.Cache, []),
     ]
     supervise(processes, strategy: :one_for_one)
   end
