@@ -4,6 +4,7 @@ defmodule TodoCacheTest do
   @path "/tmp/todolists"
 
   setup do
+    Todo.ServerSupervisor.start_link
     Todo.ProcessRegistry.start_link
     TodoCache.start_link
     TodoDatabase.start_link(@path)

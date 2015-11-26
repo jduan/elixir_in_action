@@ -10,7 +10,8 @@ defmodule TodoServerTest do
   end
 
   test "add_entry" do
-    pid = TodoServer.start_link("server1")
+    TodoServer.start_link("server1")
+    pid = TodoServer.whereis("server1")
     TodoServer.add_entry(pid, %{date: {2013, 12, 10}, title: "Movies"})
     TodoServer.add_entry(pid, %{date: {2013, 12, 10}, title: "Shopping"})
 

@@ -25,6 +25,7 @@ defmodule TodoCache do
       :undefined ->
         IO.puts "#{name} hasn't started yet"
         Todo.ServerSupervisor.start_child(name)
+        TodoServer.whereis(name)
       pid -> pid
     end
     {:reply, pid, state}
