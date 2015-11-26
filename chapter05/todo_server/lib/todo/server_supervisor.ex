@@ -4,13 +4,13 @@ defmodule Todo.ServerSupervisor do
   def start_link do
     IO.puts "Starting Todo.ServerSupervisor"
     Supervisor.start_link(__MODULE__, nil,
-      name: :todo_server_supervisor
+      name: __MODULE__,
     )
   end
 
   def start_child(todo_list_name) do
     Supervisor.start_child(
-      :todo_server_supervisor,
+      __MODULE__,
       [todo_list_name]
     )
   end
