@@ -1,10 +1,11 @@
 defmodule TodoServerTest do
   use ExUnit.Case
   doctest TodoServer
+  @path "/tmp/todolists"
 
   setup do
-    path = "/tmp/todolists"
-    TodoDatabase.start_link(path)
+    Todo.ProcessRegistry.start_link
+    TodoDatabase.start_link(@path)
     :ok
   end
 
@@ -18,6 +19,6 @@ defmodule TodoServerTest do
       %{date: {2013, 12, 10}, title: "Movies"},
     ]
 
-    TodoDatabase.clear
+    File.rm_rf!(@path)
   end
 end

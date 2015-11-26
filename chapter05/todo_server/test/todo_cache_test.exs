@@ -1,11 +1,12 @@
 defmodule TodoCacheTest do
   use ExUnit.Case
   doctest TodoCache
+  @path "/tmp/todolists"
 
   setup do
-    path = "/tmp/todolists"
+    Todo.ProcessRegistry.start_link
     TodoCache.start_link
-    TodoDatabase.start_link(path)
+    TodoDatabase.start_link(@path)
     :ok
   end
 
@@ -23,7 +24,7 @@ defmodule TodoCacheTest do
       %{date: {2013, 12, 10}, title: "Movies"},
     ]
 
-    TodoDatabase.clear
+    File.rm_rf!(@path)
   end
 
   test "test a single process" do
@@ -38,6 +39,6 @@ defmodule TodoCacheTest do
       %{date: {2013, 12, 10}, title: "Movies"},
     ]
 
-    TodoDatabase.clear
+    File.rm_rf!(@path)
   end
 end
