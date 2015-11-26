@@ -17,17 +17,17 @@ defmodule TodoCache do
   # Server implementation
 
   def init(_) do
-    {:ok, %{}}
+    {:ok, nil}
   end
 
-  def handle_call({:server_process, name}, _, cache) do
-    case Map.fetch(cache, name) do
-      {:ok, pid} ->
-        {:reply, pid, cache}
-      :error ->
-        pid = TodoServer.start_link(name)
-        {:reply, pid, Map.put(cache, name, pid)}
+  def handle_call({:server_process, name}, _, state) do
+    pid = case TodoServer.whereis(name) do
+      :undefined ->
+        IO.puts "#{name} hasn't started yet"
+        Todo.ServerSupervisor.start_child(name)
+      pid -> pid
     end
+    {:reply, pid, state}
   end
 
 end

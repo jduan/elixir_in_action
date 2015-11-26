@@ -6,9 +6,12 @@ defmodule TodoServer do
   # Public API
 
   def start_link(name) do
-    IO.puts "Starting TodoServer"
-    {:ok, pid} = GenServer.start_link(__MODULE__, name)
-    pid
+    IO.puts "Starting TodoServer for #{name}"
+    GenServer.start_link(__MODULE__, name, name: via_tuple(name))
+  end
+
+  def whereis(name) do
+    Todo.ProcessRegistry.whereis_name({:todo_server, name})
   end
 
   def add_entry(pid, new_entry) do
@@ -64,5 +67,9 @@ defmodule TodoServer do
 
   def handle_info(_, state) do
     {:noreply, state}
+  end
+
+  defp via_tuple(name) do
+    {:via, Todo.ProcessRegistry, {:todo_server, name}}
   end
 end
