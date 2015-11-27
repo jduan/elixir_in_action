@@ -1,5 +1,6 @@
 defmodule Todo.ProcessRegistry do
   use GenServer
+  @ets_table :ets_progress_registry
 
   # Public API
 
@@ -8,6 +9,7 @@ defmodule Todo.ProcessRegistry do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
+  # writes are serialized in the "registry" process
   def register_name(name, pid) do
     GenServer.call(__MODULE__, {:register_name, name, pid})
   end
@@ -16,65 +18,55 @@ defmodule Todo.ProcessRegistry do
     GenServer.call(__MODULE__, {:unregister_name, name})
   end
 
-  def whereis_name(name) do
-    GenServer.call(__MODULE__, {:whereis_name, name})
+  # reads are concurrent and they happen in the client processes
+  def whereis_name(key) do
+    case :ets.lookup(@ets_table, key) do
+      [] -> :undefined
+      [{^key, pid}] -> pid
+    end
   end
 
-  def send(name, message) do
-    GenServer.call(__MODULE__, {:send, name, message})
+  def send(key, message) do
+    case :ets.lookup(@ets_table, key) do
+      [] ->
+        IO.puts("No process under the name #{inspect key}")
+      [{^key, pid}] ->
+        Kernel.send(pid, message)
+    end
   end
 
   # Implementation
 
   def init(_) do
+    :ets.new(@ets_table, [:set, :named_table])
     {:ok, %{}}
   end
 
-  def handle_call({:register_name, key, pid}, _, registry) do
-    case Map.get(registry, key) do
-      nil ->
+  def handle_call({:register_name, key, pid}, _, state) do
+    case :ets.lookup(@ets_table, key) do
+      [] ->
+        :ets.insert(@ets_table, {key, pid})
         # monitor the process and be notified when it terminates
         Process.monitor(pid)
-        {:reply, :yes, Map.put(registry, key, pid)}
+        {:reply, :yes, state}
       _ ->
-        {:reply, :no, registry}
+        {:reply, :no, state}
     end
   end
 
-  def handle_call({:unregister_name, key}, _, registry) do
-    {:reply, :key, Map.delete(registry, key)}
+  def handle_call({:unregister_name, key}, _, state) do
+    :ets.delete(@ets_table, key)
+    {:reply, :ok, state}
   end
 
-  def handle_call({:whereis_name, key}, _, registry) do
-    {:reply, Map.get(registry, key, :undefined), registry}
-  end
-
-  def handle_call({:send, key, message}, _, registry) do
-    case Map.get(registry, key) do
-      nil ->
-        IO.puts("No process under the name #{inspect key}")
-        {:reply, :not_ok, registry}
-      pid ->
-        Kernel.send(pid, message)
-        {:reply, :ok, registry}
-    end
-  end
-
-  def handle_info({:DOWN, _, :process, pid, _}, registry) do
-    {:noreply, deregister_pid(registry, pid)}
+  def handle_info({:DOWN, _, :process, pid, _}, state) do
+    deregister_pid(pid)
+    {:noreply, state}
   end
 
   def handle_info(_, state), do: {:noreply, state}
 
-  defp deregister_pid(registry, pid) do
-    Enum.reduce(
-      registry,
-      registry,
-      fn
-        ({name, ppid}, acc) when pid == ppid ->
-          Map.delete(acc, name)
-        (_, acc) -> acc
-      end
-    )
+  defp deregister_pid(pid) do
+    :ets.match_delete(@ets_table, {:_, pid})
   end
 end
