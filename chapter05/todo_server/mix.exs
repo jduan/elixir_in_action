@@ -18,6 +18,8 @@ defmodule TodoServer.Mixfile do
       applications: [
         :logger,
         :gproc,
+        :cowboy,
+        :plug,
       ],
       mod: {Todo.Application, []}
     ]
@@ -35,6 +37,9 @@ defmodule TodoServer.Mixfile do
   defp deps do
     [
       {:gproc, "0.3.1"},
+      {:cowboy, "1.0.0"},
+      {:plug, "0.10.0"},
+      {:httpoison, "0.4.3", only: :test},
       {:meck, "0.8.2", only: :test},
     ]
   end
