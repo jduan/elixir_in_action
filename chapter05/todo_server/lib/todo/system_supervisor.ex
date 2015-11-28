@@ -4,7 +4,7 @@ defmodule Todo.SystemSupervisor do
   # Public API
   def start_link do
     IO.puts "Starting Todo.SystemSupervisor"
-    Supervisor.start_link(__MODULE__, nil)
+    Supervisor.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
   # Implementation

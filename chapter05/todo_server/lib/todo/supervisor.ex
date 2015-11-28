@@ -3,7 +3,7 @@ defmodule Todo.Supervisor do
 
   def start_link do
     IO.puts "Starting Todo.Supervisor"
-    Supervisor.start_link(__MODULE__, nil)
+    Supervisor.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
   def init(_) do
