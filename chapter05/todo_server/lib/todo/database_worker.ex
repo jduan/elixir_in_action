@@ -36,7 +36,7 @@ defmodule Todo.DatabaseWorker do
   end
 
   def handle_call({:clear, key}, _, db_folder) do
-    File.rm!(file_path(db_folder, key))
+    File.rm(file_path(db_folder, key))
     {:reply, :ok, db_folder}
   end
 

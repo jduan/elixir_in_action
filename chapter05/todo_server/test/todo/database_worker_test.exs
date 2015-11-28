@@ -5,19 +5,17 @@ defmodule Todo.DatabaseWorkerTest do
 
   setup do
     worker_id = 2
-    Todo.ProcessRegistry.start_link
-    Todo.DatabaseWorker.start_link(@path, worker_id)
     {:ok, worker_id: worker_id}
   end
 
   test "get and store should work", context do
     worker_id = context[:worker_id]
-    Todo.DatabaseWorker.store(worker_id, "key1", "data1")
+    lst = "key1"
+    Todo.DatabaseWorker.clear(worker_id, lst)
+    Todo.DatabaseWorker.store(worker_id, lst, "data1")
 
     # TODO: figure out how to remove this hack
     :timer.sleep(100)
-    assert Todo.DatabaseWorker.get(worker_id, "key1") == "data1"
-
-    File.rm_rf!(@path)
+    assert Todo.DatabaseWorker.get(worker_id, lst) == "data1"
   end
 end

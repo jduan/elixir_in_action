@@ -30,6 +30,10 @@ defmodule Todo.Server do
     GenServer.call(pid, {:entries, date})
   end
 
+  def clear(pid) do
+    GenServer.call(pid, {:clear})
+  end
+
   # Server implementation
 
   def init(name) do
@@ -59,6 +63,11 @@ defmodule Todo.Server do
 
   def handle_call({:entries, date}, _, {name, todo_list}) do
     {:reply, Todo.List.entries(todo_list, date), {name, todo_list}}
+  end
+
+  def handle_call({:clear}, _, {name, todo_list}) do
+    Todo.Database.clear(name)
+    {:reply, :ok, {name, Todo.List.new}}
   end
 
   def handle_info(:real_init, {name, nil}) do

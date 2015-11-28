@@ -24,6 +24,12 @@ defmodule Todo.Database do
     |> Todo.DatabaseWorker.get(key)
   end
 
+  def clear(key) do
+    key
+    |> choose_worker
+    |> Todo.DatabaseWorker.clear(key)
+  end
+
   defp choose_worker(key) do
     :erlang.phash2(key, @pool_size) + 1
   end

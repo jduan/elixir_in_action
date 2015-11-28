@@ -3,19 +3,13 @@ defmodule Todo.DatabaseTest do
   doctest Todo.Database
   @path "/tmp/todolists"
 
-  setup do
-    Todo.ProcessRegistry.start_link
-    Todo.Database.start_link(@path)
-    :ok
-  end
-
   test "get and store should work" do
-    Todo.Database.store("key1", "data1")
+    lst = "key1"
+    Todo.Database.clear(lst)
+    Todo.Database.store(lst, "data1")
 
     # TODO: figure out how to remove this hack
     :timer.sleep(100)
-    assert Todo.Database.get("key1") == "data1"
-
-    File.rm_rf!(@path)
+    assert Todo.Database.get(lst) == "data1"
   end
 end
