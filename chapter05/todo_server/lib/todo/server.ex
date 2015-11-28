@@ -65,7 +65,7 @@ defmodule Todo.Server do
     {:reply, Todo.List.entries(todo_list, date), {name, todo_list}}
   end
 
-  def handle_call({:clear}, _, {name, todo_list}) do
+  def handle_call({:clear}, _, {name, _todo_list}) do
     Todo.Database.clear(name)
     {:reply, :ok, {name, Todo.List.new}}
   end

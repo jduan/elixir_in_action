@@ -5,7 +5,8 @@ defmodule Todo.Web do
   plug :dispatch
 
   def start_server do
-    Plug.Adapters.Cowboy.http(__MODULE__, nil, port: 5454)
+    port = Application.get_env(:todo_server, :port)
+    Plug.Adapters.Cowboy.http(__MODULE__, nil, port: port)
   end
 
   post "/add_entry" do

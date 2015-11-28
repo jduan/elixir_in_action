@@ -21,7 +21,10 @@ defmodule TodoServer.Mixfile do
         :cowboy,
         :plug,
       ],
-      mod: {Todo.Application, []}
+      mod: {Todo.Application, []},
+      env: [
+        port: 5454,
+      ],
     ]
   end
 
