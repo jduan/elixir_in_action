@@ -39,11 +39,11 @@ defmodule TodoServer.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:gproc, "0.3.1"},
-      {:cowboy, "1.0.0"},
-      {:plug, "0.10.0"},
-      {:httpoison, "0.4.3", only: :test},
-      {:meck, "0.8.2", only: :test},
+      {:gproc, "0.5.0"},
+      {:cowboy, "1.0.4"},
+      {:plug, "1.0.3"},
+      {:httpoison, "0.8.0", only: :test},
+      {:meck, "0.8.3", only: :test},
     ]
   end
 end
