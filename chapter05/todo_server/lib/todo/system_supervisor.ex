@@ -1,6 +1,24 @@
 defmodule Todo.SystemSupervisor do
   use Supervisor
 
+  @moduledoc """
+  This is the Todo.SystemSupervisor module.
+
+  For more info, see the `Todo.PoolSupervisor` module.
+  """
+
+  @doc """
+  Says hello to the given `name`.
+
+  Returns `:ok`.
+
+  ## Examples
+
+      iex> MyApp.Hello.world(:john)
+      :ok
+
+  """
+
   # Public API
   def start_link do
     IO.puts "Starting Todo.SystemSupervisor"
