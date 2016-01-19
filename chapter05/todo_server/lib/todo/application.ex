@@ -6,4 +6,8 @@ defmodule Todo.Application do
     Todo.Web.start_server
     response
   end
+
+  def stop(state) do
+    IO.puts "Todo.Application is shutting down!"
+  end
 end
